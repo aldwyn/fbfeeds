@@ -1,12 +1,11 @@
 from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth import authenticate, login, logout
-from login.forms import LoginForm
 from django.views import generic
 
 
 class IndexView(generic.TemplateView):
-	template_name = "login/index.html"
+	template_name = 'login/index.html'
 
 
 def validate(request):
@@ -16,7 +15,8 @@ def validate(request):
 	if user:
 		if user.is_active:
 			login(request, user)
-			return render(request, 'login/welcome.html')
+			posts = Post.objects.order_by('-post_date')[:10]
+			return render(request, 'login/feeds.html', {'posts': posts})
 		else:
 			return render(request, 'login/index.html', {
 				'error_message': "Your account has been disabled. It is very much advised that you sign up."

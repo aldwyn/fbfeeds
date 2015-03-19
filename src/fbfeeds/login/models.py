@@ -3,18 +3,18 @@ from django.contrib.auth.models import User
 
 class Post(models.Model):
 	content = models.TextField()
-	author = models.OneToOneField(User)
+	author = models.ForeignKey(User)
 	likes = models.IntegerField(default=0)
-	post_date = models.DateTimeField('date posted')
+	post_date = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
 		return self.id
 
 
 class Like(models.Model):
-	post = models.OneToOneField(Post)
+	post = models.ForeignKey(Post)
 	liker = models.ForeignKey(User)
-	like_date = models.DateTimeField('date liked')
+	like_date = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):
 		return self.id
