@@ -1,0 +1,7 @@
+README
+setup.py
+src/fbfeeds.egg-info/PKG-INFO
+src/fbfeeds.egg-info/SOURCES.txt
+src/fbfeeds.egg-info/dependency_links.txt
+src/fbfeeds.egg-info/requires.txt
+src/fbfeeds.egg-info/top_level.txt
