@@ -1,0 +1,20 @@
+{% if error_message %}
+	<p>{{ error_message }}</p>
+{% endif %}
+
+<h3><a href="">{{ post.author.username }}</a> said:</h3>
+<p><em>{{ post.content }}</em></p>
+{% if post.likes > 0 %}
+	<a href="{% url '' %}">{{ post.likes }} like{{ post.likes|pluralize }}</a>
+{% else %}
+	<p>No likes yet.</p>
+{% endif %}
+<h4>Comments:</h4>
+<ul>
+{% for comment in post.comment_set.all %}
+	<li><a href="{% url 'feeds:profile' comment.author.id %}">{{ comment.author }}</a>: <em>{{ comment.content }}</em></li>
+{% empty %}
+	<p>Be the first to comment!</p>
+{% endfor %}
+</ul>
+<a href="{% url 'feeds:like' post.id %}">Like</a>

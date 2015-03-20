@@ -1,0 +1,20 @@
+{% if error_message %}
+	<p>{{ error_message }}</p>
+{% endif %}
+
+<form action="{% url 'feeds:post' %}" method="post">
+{% csrf_token %}
+	<textarea name="content" placeholder="Don't ya wish your girlfriend was hot like me. Don't cha..."></textarea>
+	<input type="submit" value="Post">
+</form>
+
+<h4>Latest Posts</h4>
+<ul>
+{% for p in latest_posts %}
+	<li><a href="{% url 'feeds:detail' p.id %}">{{ p.content }}</a></li>
+{% empty %}
+	<li>Sorry, no posts available yet.</li>
+{% endfor %}
+</ul>
+
+<a href="{% url 'feeds:logout' %}">Log out</a>

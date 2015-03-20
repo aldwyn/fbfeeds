@@ -1,0 +1,10 @@
+{% if error_message %}
+	<p>{{ error_message }}</p>
+{% endif %}
+
+<h1>{{ profile.username }}</h1>
+{% for post in profile.post_set.all %}
+	<li><a href="{% url 'feeds:profile' post.author %}">{{ post.author }}</a>: <a href="{% url 'feeds:detail' post %}">{{ post.content }}</a></li>
+{% empty %}
+	<p>This profile hasn't posted anything yet.</p>
+{% endfor %}
