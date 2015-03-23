@@ -1,0 +1,19 @@
+{% if error_message %}
+	<p>{{ error_message }}</p>
+{% endif %}
+
+<h3><a href="{% url 'feeds:profile' post.author.id %}">{{ post.author.username }}</a> said:</h3>
+<p><em>{{ post.content }}</em></p>
+<a href="{% url 'feeds:like' post.id %}">Like</a>
+{% if likers_count > 0 %}
+	<a href="{% url 'feeds:likers' post.id %}">{{ likers_count }} like{{ likers_count|pluralize }}</a>
+{% else %}
+	<p>No likes yet.</p>
+{% endif %}
+
+<h4>Likers of this post:</h4>
+<ul>
+{% for liker in likers %}
+	<li><a href="{% url 'feeds:profile' liker.id %}">{{ liker.liker }}</a></li>
+{% endfor %}
+</ul>

@@ -1,0 +1,8 @@
+<form action="{% url 'feeds:edit_profile' %}" method="post">
+{% csrf_token %}
+	<input type="text" name="username" placeholder="Enter username..." disabled value="{{ session_user.username }}" />
+	<input type="text" name="firstname" placeholder="Enter first name..." value="{{ session_user.first_name }}" />
+	<input type="text" name="lastname" placeholder="Enter last name..." value="{{ session_user.last_name }}" />
+	<input type="email" name="email" placeholder="Enter email address..." value="{{ session_user.email }}" />
+	<input type="submit"/>
+</form>

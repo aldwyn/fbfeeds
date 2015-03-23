@@ -2,19 +2,27 @@
 	<p>{{ error_message }}</p>
 {% endif %}
 
-<h3><a href="">{{ post.author.username }}</a> said:</h3>
+<h3><a href="{% url 'feeds:profile' post.author.id %}">{{ post.author.username }}</a> said:</h3>
 <p><em>{{ post.content }}</em></p>
-{% if post.likes > 0 %}
-	<a href="{% url '' %}">{{ post.likes }} like{{ post.likes|pluralize }}</a>
+<a href="{% url 'feeds:like' post.id %}">Like</a>
+{% if is_author %}
+	<a href="{% url 'feeds:edit_post_view' post.id %}">Edit</a>
+{% endif %}
+{% if likers_count > 0 %}
+	<a href="{% url 'feeds:likers' post.id %}">{{ likers_count }} like{{ likers_count|pluralize }}</a>
 {% else %}
 	<p>No likes yet.</p>
 {% endif %}
 <h4>Comments:</h4>
+<form action="{% url 'feeds:comment' post.id %}" method="post">
+{% csrf_token %}
+	<textarea name="content" placeholder="Don't ya wish your girlfriend was hot like me. Don't cha..."></textarea>
+	<input type="submit" value="Comment">
+</form>
 <ul>
-{% for comment in post.comment_set.all %}
+{% for comment in comments %}
 	<li><a href="{% url 'feeds:profile' comment.author.id %}">{{ comment.author }}</a>: <em>{{ comment.content }}</em></li>
 {% empty %}
 	<p>Be the first to comment!</p>
 {% endfor %}
 </ul>
-<a href="{% url 'feeds:like' post.id %}">Like</a>

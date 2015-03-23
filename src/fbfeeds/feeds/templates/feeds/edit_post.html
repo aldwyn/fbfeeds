@@ -1,0 +1,5 @@
+<form action="{% url 'feeds:edit_post' post.id %}" method="post">
+{% csrf_token %}
+	<textarea name="content">{{ post.content }}</textarea>
+	<input type="submit"/>
+</form>

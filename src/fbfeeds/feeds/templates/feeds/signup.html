@@ -1,0 +1,10 @@
+<form action="{% url 'feeds:create_user' %}" method="post">
+{% csrf_token %}
+	<input type="text" name="username" placeholder="Enter username..." />
+	<input type="text" name="firstname" placeholder="Enter first name..." />
+	<input type="text" name="lastname" placeholder="Enter last name..." />
+	<input type="email" name="email" placeholder="Enter email address..." />
+	<input type="password" name="password" placeholder="Enter password..." />
+	<input type="password" name="conf_pass" placeholder="Confirm password..." />
+	<input type="submit"/>
+</form>
