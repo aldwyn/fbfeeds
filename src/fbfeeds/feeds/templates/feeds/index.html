@@ -1,18 +1,5 @@
-{% load staticfiles %}
+{% include 'static/head.html' %}
 
-<style type="text/css">
-	
-</style>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>Quilloid | The New Microblog</title>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link href="{% static 'feeds/css/bootstrap.min.css' %}" rel="stylesheet">
-	<link href="{% static 'feeds/css/styles.css' %}" rel="stylesheet">
-</head>
 <body>
 	<div class="container">
 		<div class="page-header">
@@ -34,6 +21,6 @@
 		</form>
 	</div>
 </body>
-<script type="text/javascript" src="{% static 'feeds/js/jquery.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'feeds/js/bootstrap.min.js' %}"></script>
+
+{% include 'static/scripts.html' %}
 </html>

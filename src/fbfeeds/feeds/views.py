@@ -62,6 +62,7 @@ def detail(request, post_id):
 		'post': post,
 		'likers_count': likers_count,
 		'is_author': (post.author.pk == request.user.pk),
+		'session_user': request.user,
 		'comments': comments,
 	})
 

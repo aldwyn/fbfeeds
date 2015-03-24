@@ -1,28 +1,49 @@
-{% if error_message %}
-	<p>{{ error_message }}</p>
-{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+{% include 'static/head.html' %}
 
-<h3><a href="{% url 'feeds:profile' post.author.id %}">{{ post.author.username }}</a> said:</h3>
-<p><em>{{ post.content }}</em></p>
-<a href="{% url 'feeds:like' post.id %}">Like</a>
-{% if is_author %}
-	<a href="{% url 'feeds:edit_post_view' post.id %}">Edit</a>
-{% endif %}
-{% if likers_count > 0 %}
-	<a href="{% url 'feeds:likers' post.id %}">{{ likers_count }} like{{ likers_count|pluralize }}</a>
-{% else %}
-	<p>No likes yet.</p>
-{% endif %}
-<h4>Comments:</h4>
-<form action="{% url 'feeds:comment' post.id %}" method="post">
-{% csrf_token %}
-	<textarea name="content" placeholder="Don't ya wish your girlfriend was hot like me. Don't cha..."></textarea>
-	<input type="submit" value="Comment">
-</form>
-<ul>
-{% for comment in comments %}
-	<li><a href="{% url 'feeds:profile' comment.author.id %}">{{ comment.author }}</a>: <em>{{ comment.content }}</em></li>
-{% empty %}
-	<p>Be the first to comment!</p>
-{% endfor %}
-</ul>
+<body>
+	{% include 'static/header.html' %}
+
+	<div class="container std-container">
+		<h3><a href="{% url 'feeds:profile' post.author.id %}">{{ post.author.username }}</a> shouted out:</h3>
+		<blockquote>
+			<p><em>"{{ post.content }}"</em></p>
+			<footer>on <em>{{ post.post_date }}</em></footer>
+		</blockquote>
+		<div>
+		{% if likers_count > 0 %}
+			<a href="{% url 'feeds:likers' post.id %}">{{ likers_count }} like{{ likers_count|pluralize }}</a>
+		{% endif %}
+		</div>
+		<div class="btn-group" role="group" aria-label="...">
+			<a class="btn btn-primary" href="{% url 'feeds:like' post.id %}">Like</a>
+		{% if is_author %}
+			<a class="btn btn-warning" href="{% url 'feeds:edit_post_view' post.id %}">Edit</a>
+		{% endif %}
+			<a class="btn btn-success" href="{% url 'feeds:like' post.id %}">What do you think?</a>
+		</div>
+		<form action="{% url 'feeds:comment' post.id %}" method="post">
+		{% csrf_token %}
+			<div class="form-group">
+				<textarea name="content" class="form-control" rows="4" required placeholder="What do you think...?"></textarea>
+			</div>
+			<button type="submit" class="btn btn-primary pull-right">Comment</button>
+		</form>
+		<div>
+			<h4>Comments</h4>
+			{% for comment in comments %}
+				<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
+				<a href="{% url 'feeds:profile' comment.author.id %}">{{ comment.author }}</a>: 
+				<em>{{ comment.content }}</em>
+			{% empty %}
+				<p>Be the first to comment!</p>
+			{% endfor %}
+		</div>
+	</div>
+
+
+	{% include 'static/footer.html' %}
+</body>
+
+{% include 'static/scripts.html' %}

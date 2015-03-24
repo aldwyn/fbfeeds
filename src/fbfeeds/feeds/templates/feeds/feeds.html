@@ -1,21 +1,43 @@
-{% if error_message %}
-	<p>{{ error_message }}</p>
-{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+{% include 'static/head.html' %}
 
-<form action="{% url 'feeds:post' %}" method="post">
-{% csrf_token %}
-	<textarea name="content" placeholder="Don't ya wish your girlfriend was hot like me. Don't cha..."></textarea>
-	<input type="submit" value="Post">
-</form>
+<body>
+	{% include 'static/header.html' %}
 
-<h4>Latest Posts</h4>
-<ul>
-{% for p in latest_posts %}
-	<li><a href="{% url 'feeds:detail' p.id %}">{{ p.content }}</a></li>
-{% empty %}
-	<li>Sorry, no posts available yet.</li>
-{% endfor %}
-</ul>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-4">
+				<form action="{% url 'feeds:post' %}" method="post">
+				{% csrf_token %}
+					<div class="form-group">
+						<textarea name="content" class="form-control" rows="7" required placeholder="Write something inspirational..."></textarea>
+					</div>
+					<button type="submit" class="btn btn-primary">Shout Out!</button>
+				</form>
+			</div>
+			<div class="col-md-8">
+			{% for p in latest_posts %}
+				<blockquote>
+					<p>
+						<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
+						<em> "{{ p.content }}" <span><a href="{% url 'feeds:detail' p.id %}">See more...</a></span></em>
+					</p>
+					<footer>
+						<em>
+							<span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
+							<a href="{% url 'feeds:profile' p.author.id %}">{{ p.author.username }}</a>'s shoutout on {{ p.post_date }}</em>
+					</footer>
+				</blockquote>
+			{% empty %}
+				<li>Sorry, no posts available yet.</li>
+			{% endfor %}
+			</div>
+		</div>
+	</div>
 
-<a href="{% url 'feeds:edit_profile_view'%}">Edit Profile</a>
-<a href="{% url 'feeds:logout' %}">Log out</a>
+	{% include 'static/footer.html' %}
+</body>
+
+{% include 'static/scripts.html' %}
+</html>
