@@ -18,7 +18,7 @@ def profile_view(request, user_id):
 	profile = User.objects.get(pk=user_id)
 	return render(request, 'feeds/profile.html', {
 		'profile': profile,
-		'is_sessioned': (profile.pk == request.user.id),
+		'session_user': request.user,
 	})
 
 
@@ -70,7 +70,7 @@ def detail(request, post_id):
 def likers_view(request, post_id):
 	post = Post.objects.get(pk=post_id)
 	likers = Like.objects.filter(post=post).order_by('-like_date')
-	return render(request, 'feeds/likers.html', {'post': post, 'likers': likers})
+	return render(request, 'feeds/likers.html', {'post': post, 'likers': likers, 'session_user': request.user})
 
 
 def validate(request):
@@ -87,11 +87,6 @@ def post(request):
 		author = request.user
 	)
 	return redirect(reverse('feeds:detail', args=(post.id,)))
-
-
-def edit_post_view(request, post_id):
-	post = Post.objects.get(pk=post_id)
-	return render(request, 'feeds/edit_post.html', {'post': post})
 
 
 def edit_post(request ,post_id):
