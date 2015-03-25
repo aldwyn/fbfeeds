@@ -10,8 +10,8 @@
 
 		<h4>Latest shoutouts:</h4>
 		<ul>
-		{% for p in profile.post_set.all %}
-			<blockquote>
+		{% for p in latest_posts %}
+			<blockquote class="well">
 				<p>
 					<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
 					<em> "{{ p.content }}" <span><a href="{% url 'feeds:detail' p.id %}">See more...</a></span></em>

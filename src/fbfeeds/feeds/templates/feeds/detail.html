@@ -10,19 +10,18 @@
 			<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
 			<a href="{% url 'feeds:profile' post.author.id %}">{{ post.author.username }}</a> shouted out:
 		</h3>
-		<div class="pull-right">
+		<div class="pull-right user-buttons">
 			<div class="btn-group" role="group" aria-label="...">
-				<a class="btn btn-primary btn-lg" href="{% url 'feeds:like' post.id %}">
+				<a class="btn btn-primary" href="{% url 'feeds:like' post.id %}">
 					<span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
 				</a>
 			{% if is_author %}
-				<button type="button" class="btn btn-warning btn-lg" data-toggle="modal" data-target=".edit-post">
+				<button type="button" class="btn btn-warning" data-toggle="modal" data-target=".edit-post">
 					<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
 				</button>
-
 			{% endif %}
 			</div>
-			<div class="modal fade edit-post" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+			<div class="modal fade edit-post" tabindex="-1" role="dialog" aria-hidden="true">
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -53,13 +52,7 @@
 				</p>
 			{% endif %}
 		</blockquote>
-		<form action="{% url 'feeds:comment' post.id %}" method="post">
-		{% csrf_token %}
-			<textarea name="content" class="form-control" rows="2" required placeholder="What do you think...?"></textarea>
-			<button type="submit" class="btn btn-default btn-sm">Comment</button>
-		</form>
-		<div id="comments" class="well">
-			<h4>Comments</h4>
+		<div class="well">
 			<ul class="list-group">
 				{% for comment in comments %}
 					<li class="list-group-item">
@@ -70,6 +63,15 @@
 				{% empty %}
 					<p>Be the first to comment!</p>
 				{% endfor %}
+				<li class="list-group-item">
+					<form action="{% url 'feeds:comment' post.id %}" method="post" class="form-inline">
+					{% csrf_token %}
+						<textarea name="content" class="form-control" rows="2" required placeholder="What do you think...?" style="width: 600px"></textarea>
+						<button type="submit" class="btn btn-primary btn-sm" style="margin-left: 4px">
+							<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span> Comment
+						</button>
+					</form>
+				</li>
 			</ul>
 		</div>
 	</div>

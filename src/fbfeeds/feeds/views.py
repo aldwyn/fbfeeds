@@ -2,7 +2,17 @@ from django.shortcuts import render, redirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from django.views.generic import TemplateView
 from feeds.models import Post, Like, Comment
+
+
+
+# class IndexView(TemplateView):
+# 	template_name = 'feeds/index.html'
+
+# 	def post(self):
+		
+
 
 
 def index(request):
@@ -16,19 +26,17 @@ def index(request):
 
 def profile_view(request, user_id):
 	profile = User.objects.get(pk=user_id)
+	latest_posts = profile.post_set.order_by('-post_date')[:10]
 	return render(request, 'feeds/profile.html', {
 		'profile': profile,
 		'session_user': request.user,
+		'latest_posts': latest_posts
 	})
 
 
 def logout_view(request):
 	logout(request)
 	return redirect(reverse('feeds:index'))
-
-
-def signup_view(request):
-	return render(request, 'feeds/signup.html')
 
 
 def create_user(request):
