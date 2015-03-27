@@ -1,7 +1,7 @@
 <nav class="navbar navbar-default navbar-inverse">
 	<div class="container">
 		<div class="navbar-header">
-			<a href="{% url 'feeds:index' %}" class="navbar-brand">
+			<a href="{% url 'feeds:feeds' %}" class="navbar-brand">
 				ShoutOut <small><em>| The New Microblogger</em></small>
 			</a>
 		</div>
@@ -13,6 +13,7 @@
 				</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" data-toggle="modal" data-target=".post"><span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span> Shout out!</a></li>
+					<li><a href="{% url 'feeds:profile' session_user.username %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profile</a></li>
 					<li><a href="{% url 'feeds:index' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Go to Home</a></li>
 					<li class="divider"></li>
 					<li><a href="{% url 'feeds:edit_profile_view' %}"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Edit profile</a></li>
@@ -31,7 +32,7 @@
 					{% csrf_token %}
 						<div class="modal-body">
 							<div class="form-group">
-								<textarea name="content" class="form-control" placeholder="What are you thinking...?"></textarea>
+								<textarea name="content" class="form-control" rows="4" placeholder="What are you thinking...?"></textarea>
 							</div>
 						</div>
 						<div class="modal-footer">

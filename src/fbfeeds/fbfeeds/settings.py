@@ -86,4 +86,4 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = './staticfiles'
 
-PROFILE_IMAGE = './profile_images'
+PROFILE_IMAGE_DIRS = './profile_images'

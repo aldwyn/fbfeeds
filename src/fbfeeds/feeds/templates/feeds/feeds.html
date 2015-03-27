@@ -31,12 +31,14 @@
 					<footer>
 						<em>
 							<span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
-							<a href="{% url 'feeds:profile' p.author.id %}">{{ p.author.username }}</a>'s shoutout on {{ p.post_date }}
+							<a href="{% url 'feeds:profile' p.author.username %}">{{ p.author.username }}</a>'s shoutout on {{ p.post_date }}
 						</em>
 					</footer>
 				</blockquote>
 			{% empty %}
-				<li>No posts are available yet.</li>
+				<blockquote class="well">
+					<em>No posts are available yet.</em>
+				</blockquote>
 			{% endfor %}
 			</div>
 		</div>

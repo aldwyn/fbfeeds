@@ -29,3 +29,8 @@ nav {
 .user-buttons {
     margin: 10px;
 }
+
+.modal-body {
+    background: url("../images/background.jpg") no-repeat center center fixed;
+    background-size: cover;
+}

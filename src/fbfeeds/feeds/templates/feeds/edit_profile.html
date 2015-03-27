@@ -33,6 +33,37 @@
 					<input type="email" name="email" id="email" class="form-control" required placeholder="Enter email address..." value="{{ session_user.email }}" />
 				</div>
 			</div>
+			<div class="form-group">
+				<label for="birthdate" class="col-sm-3 control-label">Birthdate</label>
+				<div class="col-sm-9">
+					<input type="date" name="birthdate" id="birthdate" class="form-control" required placeholder="Enter email address..." value="{{ session_user.email }}" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="bio" class="col-sm-3 control-label">Bio (Description)</label>
+				<div class="col-sm-9">
+					<textarea name="bio" id="bio" class="form-control" rows="4" required placeholder="Let me know a description, or two, about yourself..."></textarea>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="prof_pic" class="col-sm-3 control-label">Profile Picture</label>
+				<div class="col-sm-9">
+					<input type="file" name="prof_pic" id="prof_pic" class="form-control" required placeholder="Enter email address..." value="{{ session_user.email }}" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="gender" class="col-sm-3 control-label">Gender</label>
+				<div class="col-sm-9">
+					<div class="radio">
+						<label>
+							<input type="radio" name="gender" id="gender" checked /> Male
+						</label>
+						<label>
+							<input type="radio" name="gender" id="gender" /> Female
+						</label>
+					</div>
+				</div>
+			</div>
 			<button type="submit" class="btn btn-primary pull-right">Set</button>
 		</form>
 	</div>
