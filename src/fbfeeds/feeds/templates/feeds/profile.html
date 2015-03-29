@@ -6,7 +6,7 @@
 	{% include 'static/header.html' %}
 
 	<div class="container std-container">
-		<h1>{{ profile.user.username }}</h1>
+		<h1>@{{ profile.user.username }}</h1>
 
 		<h4>Latest shoutouts:</h4>
 		<ul>
@@ -19,7 +19,7 @@
 				<footer>
 					<em>
 						<span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>
-						<a href="{% url 'feeds:profile' p.author.username %}">{{ p.author.username }}</a>'s shoutout on {{ p.post_date }}</em>
+						<a href="{% url 'feeds:profile' p.author.user.username %}">{{ p.author.user.username }}</a>'s shoutout on {{ p.post_date }}</em>
 				</footer>
 			</blockquote>
 		{% empty %}

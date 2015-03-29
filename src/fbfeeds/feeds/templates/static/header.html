@@ -2,18 +2,19 @@
 	<div class="container">
 		<div class="navbar-header">
 			<a href="{% url 'feeds:feeds' %}" class="navbar-brand">
-				ShoutOut <small><em>| The New Microblogger</em></small>
+				<span class="glyphicon glyphicon-comment" aria-hidden="true"></span>
+				<span class="brand">ShoutOut</span>
 			</a>
 		</div>
 		{% if session_user %}
 		<ul class="nav navbar-nav navbar-right">
 			<li class="dropdown">
 				<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-					<span class="glyphicon glyphicon-user" aria-hidden="true"></span> Hi, {{ session_user.username }}! <span class="caret"></span>
+					<span class="glyphicon glyphicon-user" aria-hidden="true"></span> Hi, {{ session_user.user }}! <span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" data-toggle="modal" data-target=".post"><span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span> Shout out!</a></li>
-					<li><a href="{% url 'feeds:profile' session_user.username %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profile</a></li>
+					<li><a href="{% url 'feeds:profile' session_user %}"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Profile</a></li>
 					<li><a href="{% url 'feeds:index' %}"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Go to Home</a></li>
 					<li class="divider"></li>
 					<li><a href="{% url 'feeds:edit_profile_view' %}"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Edit profile</a></li>
@@ -32,7 +33,7 @@
 					{% csrf_token %}
 						<div class="modal-body">
 							<div class="form-group">
-								<textarea name="content" class="form-control" rows="4" placeholder="What are you thinking...?"></textarea>
+								{{ shoutout_form.content }}
 							</div>
 						</div>
 						<div class="modal-footer">

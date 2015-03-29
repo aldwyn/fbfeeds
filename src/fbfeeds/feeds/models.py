@@ -6,13 +6,26 @@ from fbfeeds import settings
 class Profile(models.Model):
     user = models.OneToOneField(User, related_name='profile')
     gender = models.CharField(
-        max_length=7, choices=(('F', 'Female'), ('M', 'Male'),))
-    prof_pic = models.ImageField(upload_to=settings.PROFILE_IMAGE_DIRS)
-    birthdate = models.DateField()
-    bio = models.TextField()
+        blank=True, max_length=1, choices=(('F', 'Female'), ('M', 'Male'),))
+    prof_pic = models.ImageField(null=True, upload_to='feeds/prof_pics/')
+    birthdate = models.DateField(null=True)
+    bio = models.TextField(blank=True)
 
     def __unicode__(self):
         return self.user.username
+
+    def to_dict(self):
+        return {
+            'username': self.user.username,
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name,
+            'password': self.user.password,
+            'email': self.user.email,
+            'birthdate': self.birthdate,
+            'prof_pic': self.prof_pic,
+            'gender': self.gender,
+            'bio': self.bio,
+        }
 
 
 class Post(models.Model):
@@ -23,6 +36,12 @@ class Post(models.Model):
 
     def __unicode__(self):
         return self.content
+
+    def to_dict(self):
+        return {
+            'content': self.content,
+            'author': author,
+        }
 
 
 class Like(models.Model):

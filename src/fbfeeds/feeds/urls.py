@@ -1,23 +1,28 @@
 from django.conf.urls import patterns, url
+from django.contrib.auth.views import login, logout
+from django.contrib.auth.decorators import login_required
 from feeds import views
 
 urlpatterns = patterns(
     '',
     url(r'^$', views.IndexView.as_view(), name='index'),
     url(r'^feeds/$', views.FeedsView.as_view(), name='feeds'),
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    url(r'^logout/$', 'django.contrib.auth.views.logout',
+        {'next_page': '/shoutout'}, name='logout'),
     url(r'^(?P<post_id>\d+)/$', views.DetailView.as_view(), name='detail'),
-    url(r'^(?P<post_id>\d+)/like/$', views.like, name='like'),
-    url(r'^(?P<post_id>\d+)/comment/$', views.comment, name='comment'),
-    url(r'^(?P<post_id>\d+)/likers/$', views.likers_view, name='likers'),
+    url(r'^(?P<post_id>\d+)/like/$', views.LikeRedirectView.as_view(), name='like'),
+    url(r'^(?P<post_id>\d+)/unlike/$', views.UnlikeRedirectView.as_view(), name='unlike'),
+    url(r'^comment/$', views.CommentRedirectView.as_view(), name='comment'),
     url(r'^(?P<post_id>\d+)/edit_post/$',
-        views.edit_post, name='edit_post'),
+        views.EditPostRedirectView.as_view(), name='edit_post'),
+    url(r'^(?P<post_id>\d+)/delete_post/$',
+        views.DeletePostRedirectView.as_view(), name='delete_post'),
     url(r'^profile/(?P<slug>\w+)/$',
         views.ProfileView.as_view(), name='profile'),
-    url(r'^profile/edit/$', views.edit_profile_view,
+    url(r'^profile_edit$', views.ProfileEditView.as_view(),
         name='edit_profile_view'),
-    url(r'^edit_profile/$', views.edit_profile, name='edit_profile'),
-    url(r'^post/$', views.post, name='post'),
-    url(r'^logout/$', views.logout_view, name='logout'),
-    url(r'^create_user/$', views.create_user, name='create_user'),
-    url(r'^validate/$', views.validate, name='validate'),
+    url(r'^edit_profile/$', views.EditProfileRedirectView.as_view(), name='edit_profile'),
+    url(r'^post/$', views.PostRedirectView.as_view(), name='post'),
+    url(r'^create_user/$', views.CreateUserRedirectView.as_view(), name='create_user'),
 )

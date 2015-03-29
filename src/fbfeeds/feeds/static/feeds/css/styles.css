@@ -1,3 +1,8 @@
+@font-face {
+    font-family: Lobster;
+    src: url("../fonts/lobster.otf");
+}
+
 html {
     position: relative;
     min-height: 100%;
@@ -5,12 +10,17 @@ html {
 
 body {
     margin-bottom: 60px;
-    background: url("../images/background.jpg") no-repeat center center fixed;
+    /*background: url("../images/background.jpg") no-repeat center center fixed;*/
     background-size: cover;
 }
 
 nav {
     box-shadow: 0px 2px 3px #333;
+}
+
+.brand {
+    font-family: Lobster;
+    /*font-size: 28px;*/
 }
 
 .footer {
@@ -31,6 +41,10 @@ nav {
 }
 
 .modal-body {
-    background: url("../images/background.jpg") no-repeat center center fixed;
+    /*background: url("../images/background.jpg") no-repeat center center fixed;*/
     background-size: cover;
+}
+
+.comment-textarea {
+    width: 600px;
 }

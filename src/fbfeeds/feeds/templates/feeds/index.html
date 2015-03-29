@@ -3,10 +3,10 @@
 <body>
 	<div class="container std-container">
 		<div class="page-header">
-			<h1>ShoutOut <small><em>| The New Microblogger</em></small></h1>
+			<h1><span class="brand">ShoutOut</span> <small><em>| The New Microblogger</em></small></h1>
 		</div>
 		<div style="width: 30%; margin: 0 auto">
-			<form action="{% url 'feeds:validate' %}" method="post">
+			<form action="{% url 'feeds:login' %}" method="post">
 			{% csrf_token %}
 				<div class="form-group">
 					<label for="username">Username</label>

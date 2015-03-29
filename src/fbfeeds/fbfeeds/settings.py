@@ -84,6 +84,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = './staticfiles'
+STATIC_ROOT = './staticfiles/'
 
-PROFILE_IMAGE_DIRS = './profile_images'
+LOGIN_REDIRECT_URL = '/shoutout'
