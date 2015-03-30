@@ -10,7 +10,7 @@ html {
 
 body {
     margin-bottom: 60px;
-    /*background: url("../images/background.jpg") no-repeat center center fixed;*/
+    background: url("../images/background.jpg") no-repeat center center fixed;
     background-size: cover;
 }
 
@@ -41,10 +41,14 @@ nav {
 }
 
 .modal-body {
-    /*background: url("../images/background.jpg") no-repeat center center fixed;*/
+    background: url("../images/background.jpg") no-repeat center center fixed;
     background-size: cover;
 }
 
 .comment-textarea {
     width: 600px;
+}
+
+a {
+    color: #173A59;
 }

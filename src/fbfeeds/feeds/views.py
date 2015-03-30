@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -15,8 +15,8 @@ class IndexView(TemplateView):
     def get(self, request):
         if not request.user.is_authenticated():
             return self.render_to_response({
-                'forms_signup': forms.SignupForm(),
-                'forms_login': forms.LoginForm(),
+                'signup_form': forms.SignupForm(),
+                'login_form': forms.LoginForm(),
             })
         else:
             return redirect(reverse('feeds:feeds'))
@@ -25,61 +25,76 @@ class IndexView(TemplateView):
 class FeedsView(TemplateView):
     template_name = 'feeds/feeds.html'
 
-    def get(self, request):
-        if request.user.is_authenticated():
-            print Profile.objects.get(user=request.user)
-            return self.render_to_response({
-                'latest_posts': Post.objects.all().order_by('-post_date')[:10],
-                'session_user': Profile.objects.get(user=request.user),
-                'shoutout_form': forms.ShoutoutForm(),
-                'is_more_than_10': False,
-            })
-        else:
-            return redirect(reverse('feeds:index'))
+    def get_context_data(self, *args, **kwargs):
+        context = super(FeedsView, self).get_context_data(*args, **kwargs)
+        session_user = get_object_or_404(Profile, user=self.request.user)
+        context.update({
+            'latest_posts': Post.objects.all().order_by('-post_date')[:10],
+            'session_user': session_user,
+            'shoutout_form': forms.ShoutoutForm(initial={
+                'author': session_user,
+            }),
+            'is_more_than_10': False,
+        })
+        return context
 
 
 class ProfileView(TemplateView):
     template_name = 'feeds/profile.html'
 
-    def get(self, request, slug):
-        profile = Profile.objects.get(user__username=slug)
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProfileView, self).get_context_data(*args, **kwargs)
+        profile = get_object_or_404(Profile, user__username=kwargs['slug'])
         latest_posts = Post.objects.filter(
             author=profile).order_by('-post_date')[:10]
-        return self.render_to_response({
+        session_user = get_object_or_404(Profile, user=request.user)
+        context.update({
             'profile': profile,
             'latest_posts': latest_posts,
-            'shoutout_form': forms.ShoutoutForm(),
-            'session_user': Profile.objects.get(user=request.user)
+            'shoutout_form': forms.ShoutoutForm(initial={
+                'author': session_user,
+            }),
+            'session_user': session_user
         })
+        return context
 
 
 class ProfileEditView(TemplateView):
     template_name = 'feeds/edit_profile.html'
 
-    def get(self, request):
-        session_user = Profile.objects.get(user=request.user)
-        print session_user.__dict__
-        return self.render_to_response({
-            'session_user': session_user,
-            'shoutout_form': forms.ShoutoutForm(),
-            'profile_edit_forms': forms.ProfileEditForm(
-                initial=session_user.to_dict())
+    def get_context_data(self, *args, **kwargs):
+        context = super(ProfileEditView, self).get_context_data(
+            *args, **kwargs)
+        profile = Profile.objects.get(user=self.request.user)
+        context.update({
+            'session_user': profile,
+            'shoutout_form': forms.ShoutoutForm(initial={
+                'author': profile,
+            }),
+            'user_edit_form': forms.UserEditForm(instance=profile.user),
+            'profile_edit_form': forms.ProfileEditForm(
+                instance=profile, initial={
+                    'user_id': profile.user.pk}),
         })
+        return context
 
 
 class DetailView(TemplateView):
     template_name = 'feeds/detail.html'
 
-    def get(self, request, post_id):
-        post = Post.objects.get(pk=post_id)
+    def get_context_data(self, *args, **kwargs):
+        context = super(DetailView, self).get_context_data(*args, **kwargs)
+        post = get_object_or_404(Post, pk=kwargs['post_id'])
         likers = Like.objects.filter(post=post).order_by('-like_date')
         comments = post.comment_set.order_by('-comment_date')
-        session_user = Profile.objects.get(user=request.user)
-        return self.render_to_response({
+        session_user = get_object_or_404(Profile, user=self.request.user)
+        context.update({
             'post': post,
             'likers_count': likers.count,
             'session_user': session_user,
-            'shoutout_form': forms.ShoutoutForm(),
+            'shoutout_form': forms.ShoutoutForm(initial={
+                'author': session_user,
+            }),
             'comment_form': forms.CommentForm(initial={
                 'author': session_user,
                 'post': post,
@@ -87,18 +102,29 @@ class DetailView(TemplateView):
             'has_liked': bool(likers.filter(liker=session_user)),
             'likes': likers[:10],
             'comments': comments,
-            'comment_forms': forms.CommentForm(),
         })
+        return context
 
 
 class CreateUserRedirectView(RedirectView):
 
-    def get(self, request):
-        form = forms.SignupForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            Profile.objects.create(user=user)
-            return redirect(reverse('feeds:edit_profile'))
+    def post(self, request):
+        signup_form = forms.SignupForm(request.POST)
+        if signup_form.is_valid():
+            user = signup_form.save()
+            print user
+            session_user = authenticate(
+                username=request.POST['username'],
+                password=request.POST['password1']
+            )
+            if session_user:
+                if session_user.is_active():
+                    login(request, session_user)
+                    return redirect(reverse('feeds:edit_profile_view'))
+                else:
+                    return redirect(reverse('feeds:index'))
+            else:
+                return redirect(reverse('feeds:index'))
         else:
             return redirect(reverse('feeds:index'))
 
@@ -107,14 +133,18 @@ class PostRedirectView(RedirectView):
 
     def get(self, request):
         form = forms.ShoutoutForm(request.POST)
-        post = form.save()
-        return redirect(reverse('feeds:detail', args=(post.id,)))
+        print form.is_valid()
+        if form.is_valid():
+            post = form.save()
+            return redirect(reverse('feeds:detail', args=(post.id,)))
+        else:
+            return redirect(reverse('feeds:feeds'))
 
 
 class EditPostRedirectView(RedirectView):
 
     def get(self, request, post_id):
-        post = Post.objects.get(pk=post_id)
+        post = get_object_or_404(Post, pk=post_id)
         post.content = request.POST['content']
         post.save()
         return redirect(reverse('feeds:detail', args=(post_id,)))
@@ -130,18 +160,28 @@ class DeletePostRedirectView(RedirectView):
 class EditProfileRedirectView(RedirectView):
 
     def get(self, request):
-        form = forms.ProfileEditForm(request.POST, request.FILES)
-        if not form.is_valid():
-            form.save()
-        return redirect(reverse('feeds:profile'), args=(request.user,))
+        user_form = forms.UserEditForm(
+            request.POST, instance=request.user,
+            initial={
+                'password': request.user.password if not request.user.is_anonymous() else None
+            })
+        if user_form.is_valid():
+            user_form.save()
+        profile_form = forms.ProfileEditForm(
+            request.POST, request.FILES,
+            instance=get_object_or_404(Profile, user=request.user))
+        if profile_form.is_valid():
+            profile_form.save()
+        return redirect(reverse(
+            'feeds:profile', args=(request.user.username,)))
 
 
 class LikeRedirectView(RedirectView):
 
     def get(self, request, post_id):
         like = Like.objects.create(
-            post=Post.objects.get(pk=post_id),
-            liker=Profile.objects.get(user=request.user)
+            post=get_object_or_404(Post, pk=post_id),
+            liker=get_object_or_404(Profile, user=request.user)
         )
         return redirect(reverse('feeds:detail', args=(post_id,)))
 
@@ -150,8 +190,8 @@ class UnlikeRedirectView(RedirectView):
 
     def get(self, request, post_id):
         Like.objects.filter(
-            post=Post.objects.get(pk=post_id),
-            liker=Profile.objects.get(user=request.user)
+            post=get_or_create(Post, pk=post_id),
+            liker=get_object_or_404(Profile, user=request.user)
         ).delete()
         return redirect(reverse('feeds:detail', args=(post_id,)))
 
@@ -160,5 +200,6 @@ class CommentRedirectView(RedirectView):
 
     def get(self, request):
         form = forms.CommentForm(request.POST)
-        comment = form.save()
+        if form.is_valid():
+            form.save()
         return redirect(reverse('feeds:detail', args=(request.POST['post'],)))

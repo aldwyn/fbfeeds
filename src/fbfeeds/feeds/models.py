@@ -13,20 +13,7 @@ class Profile(models.Model):
 
     def __unicode__(self):
         return self.user.username
-
-    def to_dict(self):
-        return {
-            'username': self.user.username,
-            'first_name': self.user.first_name,
-            'last_name': self.user.last_name,
-            'password': self.user.password,
-            'email': self.user.email,
-            'birthdate': self.birthdate,
-            'prof_pic': self.prof_pic,
-            'gender': self.gender,
-            'bio': self.bio,
-        }
-
+        
 
 class Post(models.Model):
     content = models.TextField()

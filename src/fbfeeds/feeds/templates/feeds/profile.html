@@ -6,16 +6,18 @@
 	{% include 'static/header.html' %}
 
 	<div class="container std-container">
-		<h1>@{{ profile.user.username }}</h1>
-
-		<h4>Latest shoutouts:</h4>
-		<ul>
+		<div class="page-header">
+			<h1>@{{ profile.user.username }} | <small><em>{{ profile.user.first_name }} {{ profile.user.last_name }}</em></small></h1>
+		</div>
+		<ul class="list-group">
 		{% for p in latest_posts %}
+			<div class="pull-right user-buttons">
+				<a href="{% url 'feeds:detail' p.id %}" class="btn btn-warning btn-sm" title="See comments">
+					<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+				</a>
+			</div>
 			<blockquote class="well">
-				<p>
-					<span class="glyphicon glyphicon-bullhorn" aria-hidden="true"></span>
-					<em> "{{ p.content }}" <span><a href="{% url 'feeds:detail' p.id %}">See more...</a></span></em>
-				</p>
+				<em>{{ p.content|slice:':100' }} ...</em>
 				<footer>
 					<em>
 						<span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span>

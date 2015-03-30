@@ -9,63 +9,58 @@
 		<h4>Edit profile</h4>
 		<form action="{% url 'feeds:edit_profile' %}" method="post" class="form-horizontal" enctype="multipart/form-data">
 		{% csrf_token %}
+			{{ profile_edit_form.user_id }}
 			<div class="form-group">
 				<label for="username" class="col-sm-3 control-label">Username</label>
 				<div class="col-sm-9">
-					{{ profile_edit_forms.username }}
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="password" class="col-sm-3 control-label">Password</label>
-				<div class="col-sm-9">
-					{{ profile_edit_forms.password }}
+					{{ user_edit_form.username }}
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="firstname" class="col-sm-3 control-label">First Name</label>
 				<div class="col-sm-9">
-					{{ profile_edit_forms.first_name }}
+					{{ user_edit_form.first_name }}
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="lastname" class="col-sm-3 control-label">Last Name</label>
 				<div class="col-sm-9">
-					{{ profile_edit_forms.last_name }}
+					{{ user_edit_form.last_name }}
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="email" class="col-sm-3 control-label">Email Address</label>
 				<div class="col-sm-9">
-					{{ profile_edit_forms.email }}
+					{{ user_edit_form.email }}
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="birthdate" class="col-sm-3 control-label">Birthdate</label>
 				<div class="col-sm-9">
-					{{ profile_edit_forms.birthdate }}
+					{{ profile_edit_form.birthdate }}
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="bio" class="col-sm-3 control-label">Bio (Description)</label>
 				<div class="col-sm-9">
-					{{ profile_edit_forms.bio }}
+					{{ profile_edit_form.bio }}
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="prof_pic" class="col-sm-3 control-label">Profile Picture</label>
 				<div class="col-sm-9">
-					{{ profile_edit_forms.prof_pic }}
+					{{ profile_edit_form.prof_pic }}
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="gender" class="col-sm-3 control-label">Gender</label>
 				<div class="col-sm-9">
 					<div class="radio">
-						{{ profile_edit_forms.gender }}
+						{{ profile_edit_form.gender }}
 					</div>
 				</div>
 			</div>
-			<button type="submit" class="btn btn-primary pull-right">Set</button>
+			<button type="submit" class="btn btn-primary pull-right">Submit</button>
 		</form>
 	</div>
 

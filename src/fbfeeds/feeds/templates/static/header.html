@@ -10,7 +10,7 @@
 		<ul class="nav navbar-nav navbar-right">
 			<li class="dropdown">
 				<a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-					<span class="glyphicon glyphicon-user" aria-hidden="true"></span> Hi, {{ session_user.user }}! <span class="caret"></span>
+					<span class="glyphicon glyphicon-user" aria-hidden="true"></span> Hi, @{{ session_user.user }}! <span class="caret"></span>
 				</a>
 				<ul class="dropdown-menu" role="menu">
 					<li><a href="#" data-toggle="modal" data-target=".post"><span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span> Shout out!</a></li>
@@ -36,6 +36,7 @@
 								{{ shoutout_form.content }}
 							</div>
 						</div>
+						{{ shoutout_form.author }}
 						<div class="modal-footer">
 							<button type="submit" class="btn btn-primary">
 								<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Shout Out!
