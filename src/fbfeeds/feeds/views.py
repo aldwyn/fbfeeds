@@ -1,13 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.urlresolvers import reverse
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
+from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, RedirectView
 
 from feeds.models import Post, Like, Comment, Profile
 from feeds import forms
+
+
+class LoginRequiredMixin(object):
+
+    @method_decorator(login_required)
+    def dispath(self, request, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
 
 
 class IndexView(TemplateView):
@@ -23,17 +32,16 @@ class IndexView(TemplateView):
             return redirect(reverse('feeds:feeds'))
 
 
-class FeedsView(TemplateView):
+class FeedsView(LoginRequiredMixin, TemplateView):
     template_name = 'feeds/feeds.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(FeedsView, self).get_context_data(*args, **kwargs)
-        session_user = get_object_or_404(Profile, user=self.request.user)
         context.update({
             'latest_posts': Post.objects.all().order_by('-post_date')[:10],
-            'session_user': session_user,
+            'session_user': self.request.user.profile,
             'shoutout_form': forms.ShoutoutForm(initial={
-                'author': session_user,
+                'author': self.request.user.profile,
             }),
             'is_more_than_10': False,
         })
@@ -48,14 +56,13 @@ class ProfileView(TemplateView):
         profile = get_object_or_404(Profile, user__username=kwargs['slug'])
         latest_posts = Post.objects.filter(
             author=profile).order_by('-post_date')[:10]
-        session_user = get_object_or_404(Profile, user=request.user)
         context.update({
             'profile': profile,
             'latest_posts': latest_posts,
             'shoutout_form': forms.ShoutoutForm(initial={
-                'author': session_user,
+                'author': self.request.user.profile,
             }),
-            'session_user': session_user
+            'session_user': self.request.user.profile
         })
         return context
 
@@ -66,16 +73,15 @@ class ProfileEditView(TemplateView):
     def get_context_data(self, *args, **kwargs):
         context = super(ProfileEditView, self).get_context_data(
             *args, **kwargs)
-        profile = Profile.objects.get(user=self.request.user)
         context.update({
-            'session_user': profile,
+            'session_user': self.request.user.profile,
             'shoutout_form': forms.ShoutoutForm(initial={
-                'author': profile,
+                'author': self.request.user.profile,
             }),
-            'user_edit_form': forms.UserEditForm(instance=profile.user),
+            'user_edit_form': forms.UserEditForm(instance=self.request.user),
             'profile_edit_form': forms.ProfileEditForm(
-                instance=profile, initial={
-                    'user_id': profile.user.pk}),
+                instance=self.request.user.profile, initial={
+                    'user_id': self.request.user.profile.pk}),
         })
         return context
 
@@ -88,20 +94,17 @@ class DetailView(TemplateView):
         post = get_object_or_404(Post, pk=kwargs['post_id'])
         likers = Like.objects.filter(post=post).order_by('-like_date')
         comments = post.comment_set.order_by('-comment_date')
-        session_user = get_object_or_404(Profile, user=self.request.user)
         context.update({
             'post': post,
-            'likers_count': likers.count,
-            'session_user': session_user,
+            'session_user': self.request.user.profile,
             'shoutout_form': forms.ShoutoutForm(initial={
-                'author': session_user,
+                'author': self.request.user.profile,
             }),
             'comment_form': forms.CommentForm(initial={
-                'author': session_user,
+                'author': self.request.user.profile,
                 'post': post,
             }),
-            'has_liked': bool(likers.filter(liker=session_user)),
-            'likes': likers[:10],
+            'has_liked': bool(likers.filter(liker=self.request.user.profile)),
             'comments': comments,
         })
         return context
@@ -123,10 +126,13 @@ class CreateUserRedirectView(RedirectView):
                     login(request, session_user)
                     return redirect(reverse('feeds:edit_profile_view'))
                 else:
+                    messages.error(request, 'It was a disabled account.')
                     return redirect(reverse('feeds:index'))
             else:
+                messages.error(request, 'Invalid login.')
                 return redirect(reverse('feeds:index'))
         else:
+            messages.error(request, 'Please input valid data accordingly.')
             return redirect(reverse('feeds:index'))
 
 
@@ -137,8 +143,10 @@ class PostRedirectView(RedirectView):
         print form.is_valid()
         if form.is_valid():
             post = form.save()
+            messages.success(request, 'You posted a shoutout successfully.')
             return redirect(reverse('feeds:detail', args=(post.id,)))
         else:
+            messages.error(request, 'It was an invalid post.')
             return redirect(reverse('feeds:feeds'))
 
 
@@ -148,6 +156,7 @@ class EditPostRedirectView(RedirectView):
         post = get_object_or_404(Post, pk=post_id)
         post.content = request.POST['content']
         post.save()
+        messages.success(request, 'You modified this post.')
         return redirect(reverse('feeds:detail', args=(post_id,)))
 
 
@@ -155,24 +164,27 @@ class DeletePostRedirectView(RedirectView):
 
     def get(get, request, post_id):
         Post.objects.get(pk=post_id).delete()
+        messages.success(request, 'You deleted a shoutout.')
         return redirect(reverse('feeds:feeds'))
 
 
 class EditProfileRedirectView(RedirectView):
 
     def get(self, request):
+        password = None
+        if not request.user.is_anonymous():
+            password = request.user.password
         user_form = forms.UserEditForm(
             request.POST, instance=request.user,
-            initial={
-                'password': request.user.password if not request.user.is_anonymous() else None
-            })
-        if user_form.is_valid():
+            initial={'password': password})
+        profile_form = forms.ProfileEditForm(request.POST, request.FILES,
+                                             instance=request.user.profile)
+        if user_form.is_valid() and profile_form.is_valid():
             user_form.save()
-        profile_form = forms.ProfileEditForm(
-            request.POST, request.FILES,
-            instance=get_object_or_404(Profile, user=request.user))
-        if profile_form.is_valid():
             profile_form.save()
+            messages.success(request, 'Profile updated successfully.')
+        else:
+            messages.error(request, 'Invalid login.')
         return redirect(reverse(
             'feeds:profile', args=(request.user.username,)))
 
@@ -182,7 +194,7 @@ class LikeRedirectView(RedirectView):
     def get(self, request, post_id):
         like = Like.objects.create(
             post=get_object_or_404(Post, pk=post_id),
-            liker=get_object_or_404(Profile, user=request.user)
+            liker=request.user.profile,
         )
         return redirect(reverse('feeds:detail', args=(post_id,)))
 
@@ -192,7 +204,7 @@ class UnlikeRedirectView(RedirectView):
     def get(self, request, post_id):
         Like.objects.filter(
             post=get_or_create(Post, pk=post_id),
-            liker=get_object_or_404(Profile, user=request.user)
+            liker=request.user.profile,
         ).delete()
         return redirect(reverse('feeds:detail', args=(post_id,)))
 

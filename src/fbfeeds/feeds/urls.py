@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.conf.urls import patterns, url
 from django.contrib.auth.views import login, logout
 from django.contrib.auth.decorators import login_required

@@ -1,0 +1,28 @@
+{% for p in latest_posts %}
+    <div class="pull-right user-buttons">
+        <div class="btn-group" role="group">
+            {% if p.like_set.count > 0 %}
+                <div class="btn btn-primary btn-xs">
+                    <span class="badge">{{ p.like_set.count }}</span>
+                    <span class="glyphicon glyphicon-thumbs-up"></span>
+                </div>
+            {% endif %}
+            <a href="{% url 'feeds:detail' p.id %}" class="btn btn-warning btn-xs" title="See comments">
+                <span class="glyphicon glyphicon-eye-open"></span>
+            </a>
+        </div>
+    </div>
+    <blockquote class="well">
+        <em>{{ p.content|slice:':100' }} ...</em>
+        <footer>
+            <em>
+                <span class="glyphicon glyphicon-pushpin"></span>
+                <a href="{% url 'feeds:profile' p.author.user.username %}">{{ p.author.user.username }}</a>'s shoutout on {{ p.post_date }}
+            </em>
+        </footer>
+    </blockquote>
+{% empty %}
+    <blockquote class="well">
+        <em>No posts are available yet.</em>
+    </blockquote>
+{% endfor %}

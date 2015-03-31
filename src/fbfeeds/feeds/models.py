@@ -19,7 +19,6 @@ class Profile(models.Model):
 class Post(models.Model):
     content = models.TextField()
     author = models.ForeignKey(Profile)
-    likes = models.IntegerField(default=0)
     post_date = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):

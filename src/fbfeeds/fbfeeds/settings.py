@@ -87,3 +87,5 @@ STATIC_URL = '/static/'
 STATIC_ROOT = './staticfiles/'
 
 LOGIN_REDIRECT_URL = '/shoutout'
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'

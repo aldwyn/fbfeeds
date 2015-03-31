@@ -7,6 +7,7 @@
 
 	<div class="container std-container">
 		<h4>Edit profile</h4>
+		{% include 'static/errorflash.html' %}
 		<form action="{% url 'feeds:edit_profile' %}" method="post" class="form-horizontal" enctype="multipart/form-data">
 		{% csrf_token %}
 			{{ profile_edit_form.user_id }}
