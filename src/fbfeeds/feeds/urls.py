@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url
 from django.contrib.auth.views import login, logout
 from django.contrib.auth.decorators import login_required
+
 from feeds.forms import LoginForm, SignupForm
 from feeds import views
 

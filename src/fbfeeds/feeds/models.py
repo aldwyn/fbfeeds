@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+
 from fbfeeds import settings
 
 
@@ -13,7 +14,7 @@ class Profile(models.Model):
 
     def __unicode__(self):
         return self.user.username
-        
+
 
 class Post(models.Model):
     content = models.TextField()
