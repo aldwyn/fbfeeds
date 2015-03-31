@@ -1,0 +1,8 @@
+*.pyc
+*.sqlite3
+*.cfg
+bin/
+develop-eggs/
+eggs/
+parts/
+*.egg-info/
